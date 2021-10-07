@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainWindow(object):
@@ -225,9 +226,30 @@ class Ui_MainWindow(object):
             self.total.setText(self.total.text() + number)
 
     def results(self):
-        res = eval(self.total.text())
-        self.total.setText('Результат: ' + str(res))
-        self.is_equal = True
+        if not self.is_equal:
+            res = eval(self.total.text())
+            self.total.setText('Результат: ' + str(res))
+            self.is_equal = True
+        else:
+            error = QMessageBox()
+            error.setWindowTitle('Ошибка')
+            error.setText('Error')
+            error.setIcon(QMessageBox.Warning)
+            error.setStandardButtons(QMessageBox.Reset|QMessageBox.Cancel|QMessageBox.Ok)
+            error.setDefaultButton(QMessageBox.Ok)
+            error.setInformativeText('Два раза действие не выполнить')
+            error.setDetailedText('При выполнения действия, нажимайте один раз')
+            error.buttonClicked.connect(self.popup_action)
+
+            error.exec_()
+
+
+    def popup_action(self, btn):
+        if btn.text() == 'Ok':
+            print('OK')
+        elif btn.text() == 'Reset':
+            self.total.setText('')
+            self.is_equal = False
 
 
 
